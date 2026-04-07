@@ -1,8 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const OpenAI = require('openai');
-const cheerio = require('cheerio');
-const axios = require('axios');
+const ModelManager = require('./models/model-manager');
 const config = require('../config');
 
 class ChaosSkill {
@@ -10,10 +8,8 @@ class ChaosSkill {
     // 合并配置
     this.config = { ...config, ...customConfig };
     
-    // 初始化 OpenAI 客户端
-    this.openai = new OpenAI({
-      apiKey: this.config.openai.apiKey
-    });
+    // 初始化模型管理器
+    this.modelManager = new ModelManager(this.config.models);
     
     // 初始化思维模型库
     this.models = new Map();
@@ -29,6 +25,10 @@ class ChaosSkill {
     
     console.log(`混沌思维蒸馏系统初始化成功`);
     console.log(`已加载 ${this.models.size} 个思维模型`);
+    
+    // 打印模型系统状态
+    const systemStatus = this.modelManager.getSystemStatus();
+    console.log(`模型系统状态:`, systemStatus);
   }
   
   // 加载内置思维模型
@@ -209,8 +209,8 @@ class ChaosSkill {
   
   // 模型选择
   async selectModels(question, context, scenario, options = {}) {
-    const count = options.modelCount || this.config.models.defaultCount;
-    const intensity = options.collisionIntensity || this.config.models.collisionIntensity;
+    const count = options.modelCount || 5;
+    const intensity = options.collisionIntensity || 'high';
     
     // 简单的模型选择逻辑
     // 实际项目中应该根据语义相似度和场景匹配度来选择
@@ -331,24 +331,17 @@ ${model2.description}
 `;
     
     try {
-      const response = await this.openai.chat.completions.create({
-        model: this.config.openai.model,
-        messages: [{
-          role: 'system',
-          content: '你是一个思维碰撞分析专家，擅长分析不同思维视角的碰撞和融合。'
-        }, {
-          role: 'user',
-          content: prompt
-        }],
+      const response = await this.modelManager.generateText(prompt, {
         temperature: 0.7,
-        max_tokens: 2048
+        maxTokens: 2048
       });
       
       return {
         model1: model1.name,
         model2: model2.name,
-        analysis: response.choices[0].message.content,
-        timestamp: new Date().toISOString()
+        analysis: response.content,
+        timestamp: new Date().toISOString(),
+        usage: response.usage
       };
     } catch (error) {
       console.error(`思维碰撞失败 (${model1.name} vs ${model2.name}):`, error);
@@ -392,20 +385,12 @@ ${result.analysis}
 `;
     
     try {
-      const response = await this.openai.chat.completions.create({
-        model: this.config.openai.model,
-        messages: [{
-          role: 'system',
-          content: '你是一个混沌思维融合专家，擅长将多个思维视角的碰撞结果进行有机融合。'
-        }, {
-          role: 'user',
-          content: prompt
-        }],
+      const response = await this.modelManager.generateText(prompt, {
         temperature: 0.6,
-        max_tokens: 4096
+        maxTokens: 4096
       });
       
-      return response.choices[0].message.content;
+      return response.content;
     } catch (error) {
       console.error('混沌融合失败:', error);
       return '混沌融合过程中发生错误';
@@ -434,21 +419,13 @@ ${result.analysis}
 `;
     
     try {
-      const response = await this.openai.chat.completions.create({
-        model: this.config.openai.model,
-        messages: [{
-          role: 'system',
-          content: '你是一个思维分析质量验证专家，擅长评估分析结果的质量。'
-        }, {
-          role: 'user',
-          content: prompt
-        }],
+      const response = await this.modelManager.generateText(prompt, {
         temperature: 0.3,
-        max_tokens: 1024
+        maxTokens: 1024
       });
       
       // 解析验证结果
-      return this.parseVerification(response.choices[0].message.content);
+      return this.parseVerification(response.content);
     } catch (error) {
       console.error('验证失败:', error);
       return {
@@ -522,9 +499,10 @@ ${result.analysis}
     console.log('============');
     console.log(`版本: ${this.config.version}`);
     console.log(`模型数量: ${this.models.size}`);
-    console.log(`OpenAI 模型: ${this.config.openai.model}`);
-    console.log(`碰撞强度: ${this.config.models.collisionIntensity}`);
-    console.log(`质量阈值: ${this.config.models.quality.qualityThreshold}`);
+    
+    const modelStatus = this.modelManager.getSystemStatus();
+    console.log(`当前大模型: ${modelStatus.currentModel?.provider}-${modelStatus.currentModel?.model}`);
+    console.log(`可用大模型数量: ${modelStatus.totalModels}`);
     console.log('');
   }
   

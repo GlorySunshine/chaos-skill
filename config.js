@@ -2,6 +2,7 @@
  * 混沌思维蒸馏系统 - 配置文件
  * 
  * 包含系统的所有配置信息，支持环境变量覆盖
+ * 新增模型集成配置，支持多种大模型提供商
  */
 
 module.exports = {
@@ -9,6 +10,79 @@ module.exports = {
   version: '1.0.0',
   name: '混沌思维蒸馏系统',
   description: '超越单一视角的多维度思维分析平台',
+  
+  // 模型集成配置
+  models: {
+    // 默认模型配置
+    default: {
+      provider: 'openai',
+      model: 'gpt-4-turbo'
+    },
+    
+    // 模型提供商配置
+    providers: {
+      // OpenAI 配置
+      openai: {
+        model: 'gpt-4-turbo',
+        apiKey: process.env.OPENAI_API_KEY || '',
+        baseURL: process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
+        temperature: 0.7,
+        maxTokens: 4096
+      },
+      
+      // Anthropic 配置
+      anthropic: {
+        model: 'claude-3-sonnet-20240229',
+        apiKey: process.env.ANTHROPIC_API_KEY || '',
+        baseURL: process.env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com/v1',
+        temperature: 0.7,
+        maxTokens: 4096
+      },
+      
+      // 本地模型配置（支持 Llama、Alpaca 等）
+      local: {
+        model: 'llama-2-7b',
+        baseURL: process.env.LOCAL_MODEL_BASE_URL || 'http://localhost:8080',
+        temperature: 0.7,
+        maxTokens: 4096
+      }
+    },
+    
+    // 模型选择策略
+    selection: {
+      // 策略类型: 'cost' (成本最低) / 'performance' (性能最好) / 'speed' (速度最快) / 'balanced' (平衡)
+      strategy: process.env.MODEL_SELECTION_STRATEGY || 'balanced',
+      
+      // 负载均衡配置
+      loadBalancing: {
+        enabled: false,
+        roundRobin: true,
+        failover: true
+      },
+      
+      // 容错配置
+      fallback: {
+        enabled: true,
+        order: ['openai', 'anthropic', 'local']
+      }
+    },
+    
+    // 性能优化配置
+    performance: {
+      cache: {
+        enabled: true,
+        ttl: 3600 // 1小时
+      },
+      batching: {
+        enabled: false,
+        batchSize: 8
+      },
+      streaming: {
+        enabled: false,
+        chunkSize: 100
+      }
+    }
+  },
   
   // API 配置
   api: {
@@ -18,30 +92,6 @@ module.exports = {
     rateLimit: {
       windowMs: 15 * 60 * 1000, // 15分钟
       max: 100 // 最大请求数
-    }
-  },
-  
-  // OpenAI 配置
-  openai: {
-    apiKey: process.env.OPENAI_API_KEY || '',
-    model: process.env.OPENAI_MODEL || 'gpt-4-turbo',
-    temperature: 0.7,
-    maxTokens: 4096
-  },
-  
-  // 思维模型配置
-  models: {
-    // 默认激活的模型数量
-    defaultCount: 5,
-    
-    // 模型碰撞强度：low/medium/high
-    collisionIntensity: 'high',
-    
-    // 质量验证配置
-    quality: {
-      consistencyThreshold: 0.7, // 一致性阈值
-      uncertaintyThreshold: 0.15, // 不确定性容忍度
-      validationQuestions: 3 // 验证问题数量
     }
   },
   
@@ -122,7 +172,8 @@ module.exports = {
       'charlie-munger', 'warren-buffett', 'nassim-taleb',
       'richard-feynman', 'einstein', 'stephen-hawking',
       'renzhengfei', 'jack-ma', 'pony-ma',
-      'nietzsche', 'socrates', 'laozi'
+      'nietzsche', 'socrates', 'laozi',
+      'donald-trump'
     ],
     
     // 主题思维模型（5个）
