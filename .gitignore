@@ -1,0 +1,121 @@
+# 混沌思维蒸馏系统 - .gitignore 文件
+
+# 依赖包
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# 环境变量文件
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 数据文件
+*.db
+*.sqlite
+data/
+*.sqlite3
+
+# 日志文件
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.err
+*.out
+
+# 缓存文件
+cache/
+*.cache
+*.tmp
+*.temp
+.DS_Store
+
+# 构建输出
+build/
+dist/
+*.js.map
+*.jsx.map
+*.ts.map
+*.tsx.map
+
+# 测试文件
+coverage/
+.nyc_output/
+*.coverage
+*.lcov
+
+# 编辑器配置
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.bak
+
+# 操作系统文件
+Thumbs.db
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# 临时文件
+*.tmp
+*.temp
+*.swp
+*.swo
+*.swn
+*.swm
+*.swo
+
+# 安全文件
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+*.dockerignore
+
+# Kubernetes
+*.yaml
+*.yml
+*.config
+helm/
+charts/
+
+# 文件系统
+*.orig
+*.rej
+*.swo
+*.swp
+*.un~
+*~
+*.bak
+*.backup
+
+# 其他
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.tgz
+*.tar.bz2
+*.iso
