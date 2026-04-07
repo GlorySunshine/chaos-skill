@@ -1,3 +1,16 @@
+---
+name: chaos-skill
+version: 1.0.0
+description: 混沌思维蒸馏系统 - 超越单一视角的多维度思维分析平台
+author: GlorySunshine
+tags: [思维蒸馏, 多智能体, 混沌理论, 认知科学]
+language: zh-CN
+compatibility: [Claude, CodeBuddy, Copilot]
+activation:
+  - 关键词: ["混沌视角", "多维度分析", "思维碰撞", "跨界思维", "复杂性思考"]
+  - 场景: ["决策分析", "问题解决", "创新思考", "战略规划"]
+---
+
 # 混沌思维蒸馏系统 (Chaos Skill)
 
 ## 项目简介
