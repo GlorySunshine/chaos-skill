@@ -2,7 +2,7 @@
 name: chaos-skill
 version: 1.0.0
 description: 混沌思维蒸馏系统 - 超越单一视角的多维度思维分析平台
-author: Chaos Team
+author: GlorySunshine
 tags: [思维蒸馏, 多智能体, 混沌理论, 认知科学]
 language: zh-CN
 compatibility: [Claude, CodeBuddy, Copilot]

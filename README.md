@@ -770,8 +770,6 @@ SOFTWARE.
 ### 📞 支持渠道
 
 - **GitHub Issues**：https://github.com/GlorySunshine/chaos-skill/issues
-- **Email**：support@chaosskill.com
-- **微信群**：扫描下方二维码加入（如果有）
 
 ### 👥 贡献团队
 
